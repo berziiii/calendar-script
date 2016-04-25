@@ -4,7 +4,7 @@ old_file = 'WDI_BOS_011.ics'
 
 new_file = 'WDI_BOS_012.ics'
 
-# #n = number of days between cohorts (7 days in a week and 4 weeks)
+# #n = number of days between cohorts (7 days in a week and 8 weeks)
 NUM_DAYS = 56
 
 old_calendar = File.open(old_file)
