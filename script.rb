@@ -35,23 +35,23 @@ File.open(input_file) do |line|
 
   elsif line.include?("DTSTART:")
 
-    line = split_three(line)
+    line = parse_event(line, ":")
 
   elsif line.include?("DTEND:")
 
-    line = split_three(line)
+    line = parse_event(line, ":")
 
   elsif line.include?("DTSTART;VALUE=")
 
-    line = split_two(line)
+    line = parse_event(line, ":")
 
   elsif line.include?("DTEND;VALUE=")
 
-    line = split_two(line)
+    line = parse_event(line, ":")
 
   elsif line.include?("DTSTART;TZID=")
 
-    line = split_three(line)
+    line = parse_event(line, ":")
 
   end
 
