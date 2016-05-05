@@ -1,24 +1,19 @@
 #!/usr/bin/env ruby
 
-# require 'date'
-#
-fail 'Usage: script.rb <input_file> <output_file> <interval_days>' if ARGV.empty?
+require 'date'
+
+fail 'Usage: script.rb <input_file> <output_file> <interval_weeks>' if ARGV.empty?
 
 input_file = ARGV[0]
-output_file = ARGV[1]
-interval_days = ARGV[2]
-
-# NUM_DAYS = 56
-#
-# old_calendar = File.open(old_file)
-#
-# new_calendar = File.open(new_file, "w")
-#
+output_file = File.open(ARGV[1], "w")
+# Number of weeks multiplied by 7 days a week to increase by number of days
+INTERVAL_DAYS = ((ARGV[2].to_i) * 7)
 
 def parse_event(line, delimiter)
   d = line.split(/[\:\=](\d{8})/)
   d[1] = Date.parse(d[1])
-  d[1] = (d[1] + 56).to_s.gsub('-', '')
+  return line if d[1].year < 2016
+  d[1] = (d[1] + INTERVAL_DAYS).to_s.gsub('-', '')
   if d[2]
     d = d[0] + "#{delimiter}" + d[1] + d[2]
   else
@@ -26,80 +21,46 @@ def parse_event(line, delimiter)
   end
 end
 
+# Opens input file to create new file from
+File.open(input_file) do |file|
 
-File.open(input_file) do |line|
+# Loops through each line of file and labels it line
+  file.each do |line|
 
-  if line.include?("RRULE:") && line.include?("UNTIL=")
+    if line.include?("RRULE:") && line.include?("UNTIL=")
 
-    line = parse_event(line, "=")
+      line = parse_event(line, "=")
 
-  elsif line.include?("DTSTART:")
+    elsif line.include?("DTSTART:")
 
-    line = parse_event(line, ":")
+      line = parse_event(line, ":")
 
-  elsif line.include?("DTEND:")
+    elsif line.include?("DTEND:")
 
-    line = parse_event(line, ":")
+      line = parse_event(line, ":")
 
-  elsif line.include?("DTSTART;VALUE=")
+    elsif line.include?("DTSTART;VALUE=")
 
-    line = parse_event(line, ":")
+      line = parse_event(line, ":")
 
-  elsif line.include?("DTEND;VALUE=")
+    elsif line.include?("DTEND;VALUE=")
 
-    line = parse_event(line, ":")
+      line = parse_event(line, ":")
 
-  elsif line.include?("DTSTART;TZID=")
+    elsif line.include?("DTSTART;TZID=")
 
-    line = parse_event(line, ":")
+      line = parse_event(line, ":")
 
-  end
+    elsif line.include?("DTEND;TZID=")
 
+      line = parse_event(line, ":")
+
+    end
+# Takes line value, either copied or altered, and writes to output file
     output_file.write(line)
-
-end
-
+# Ends loop once it loops through whole input file
+  end
+# Closes output file which new calendar was written to
   output_file.close
-
-
-#
-# old_calendar.map do |line|
-#
-#   if line.include?("RRULE:") && line.include?("UNTIL=")
-#
-#     d = line.split(/\=([0-9]{8})/, 3)
-#     header = d[0]
-#     tail = d[2]
-#     d = Date.parse(d[1])
-#     d = (d + NUM_DAYS).to_s.gsub('-', '')
-#     d = header + '=' + d + tail
-#     line = d
-#
-#   elsif line.include?("DTSTART:")
-#
-#     line = split_three(line)
-#
-#   elsif line.include?("DTEND:")
-#
-#     line = split_three(line)
-#
-#   elsif line.include?("DTSTART;VALUE=")
-#
-#     line = split_two(line)
-#
-#   elsif line.include?("DTEND;VALUE=")
-#
-#     line = split_two(line)
-#
-#   elsif line.include?("DTSTART;TZID=")
-#
-#     line = split_three(line)
-#
-#   end
-#
-#   new_calendar.write(line)
-#
-# end
-#
-# new_calendar.close
-#old_calendar.close
+# Closes input file to secure old data
+end
