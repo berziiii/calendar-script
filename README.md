@@ -6,32 +6,35 @@ iCalendar and create a new calendar from it.
 
 ## Problem
 There was an exisiting Google calendar that had over 200 events associated with
-it. To help streamline processes of duplicating the calendar, without having to
-copy each individual event to a new date. A second problem was to manually move each copied calendar date to it's new home.
+it. In order to duplicate the old .ics calendar, you had to copy each individual
+ event to a new date. A second problem was the trivial, and time consuming,
+ process of manually moving each copied calendar event to it's new date.
 
 ## Solution
-Created a script which takes an exisiting .ics file and copies it to a new .ics
-calendar. You can either copy the entire calendar to have it's events
-appear on the same day, or add n number of days to the calendar. This will move
-the new events dates up by n days while keeping all information (time, summary, description, etc.)
-the same.
+Created a Ruby script which takes an exisiting .ics file and copies it to a new
+.ics calendar file. You can either copy the entire calendar to have it's events
+appear on the same day or add *n* number of days to the calendar. This will move
+the new events dates up by *n* days while keeping all information
+(time, summary, description, etc.) the same as the old .ics file.
 
 ## Usage
-Once you have the script.rb file cloned, choose which input calendar you'd like
-to copy and create a file for the new calendar.
+Once you have the script.rb file cloned, choose which input calendar file you'd
+like to copy and create a file for the new .ics calendar file.
 
 To run the script, execute this command in terminal:
 
 ```ruby
 ruby script.rb <input_file> <output_file> <interval_weeks>
 ```
+
 This script takes the old .ics calendar file, new .ics calendar file and the
 number of weeks you'd like the event dates to be adjusted.
 
-Below you'll find the parse_event method which loops through the file and
-parses the event:
+Below you'll find the *parse_event* method which loops through the file and
+parses each event:
 
 ```ruby
+
 def parse_event(line, delimiter)
   d = line.split(/[\:\=](\d{8})/)
   d[1] = Date.parse(d[1])
@@ -43,10 +46,11 @@ def parse_event(line, delimiter)
     d = d[0] + "#{delimiter}" + d[1]
   end
 end
+
 ```
-The INTERVAL_DAYS variable, takes the <interval_weeks> value put in as an
-argument and multiplies it by 7 (days a week) to ge the total days to increase
-the new calendar events by.
+The INTERVAL_DAYS variable, takes the <interval_weeks> argument value and
+multiplies it by 7 (days in a week) to get the total days to increase the new
+calendar events by.
 
 The parse_event method iterates over each line of the input .ics file and
 checks for these cases:
@@ -84,14 +88,26 @@ checks for these cases:
     end
 ```
 
-To check to confirm that the changes have taken place, you can run this command
-in terminal:
+To check to confirm that the changes have taken place between your old and new
+calendar files, you can run this command in terminal:
 
 ```ruby
+
 diff <input_file> <output_file> |less
+
 ```
 
 You will see the differences between the two calendar files. It should have the
-same number of lines, the only thing that would change would be the date of the
-event. The format of the date is yyyy-mm-dd without the '-'. You should see the
-difference being the INTERVAL_DAYS value.
+same number of lines, the only thing that should have changed is the date of the
+events. The format of the date is yyyymmdd. You should see the difference
+between the dates be the INTERVAL_DAYS value. Another way to confirm that the
+file size is the same run in terminal:
+
+```ruby
+
+ls -l
+
+```
+
+Locate your old and new .ics files and you should see the size of the files be
+identical.
